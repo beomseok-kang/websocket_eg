@@ -1,0 +1,40 @@
+body {
+  font-size: 12px;
+}
+
+h1 {
+  font-size: 24px;
+  color: blue;
+}
+
+#chat-box {
+  width: 300px;
+  height: 500px;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.msg {
+  box-sizing: border-box;
+  border-radius: 8px;
+  padding: 8px 16px;
+  max-width: 150px;
+  margin: 8px;
+}
+
+.notice {
+  align-self: center;
+  color: #aaa;
+  background: #555;
+}
+
+.you {
+  align-self: flex-start;
+  background: lightblue;
+}
+
+.me {
+  align-self: flex-end;
+  background: #fff444;
+}

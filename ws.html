@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>CHAT ROOM</title>
+        <link rel="stylesheet" href="/ws.css">
+    </head>
+    <body>
+        <h1>
+            Web Socket Example
+        </h1>
+        <div id="chat-box">
+        </div>
+        <form onsubmit="return onSubmitForm(event)">
+            <input type="text" name="msg" id="msg"/>
+            <button type="submit">전송</button>
+        </form>
+        <script defer>
+            var myId =  Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+            var ws = new WebSocket('ws://localhost:40510');
+
+            var $chatBox = document.getElementById("chat-box");
+        
+            ws.onopen = function () {
+                ws.send('connection:' + myId);
+            }
+        
+            ws.onmessage = function (ev) {
+                console.log(ev);
+                var [type, msg] = classifyMsg(ev.data);
+
+                var $msgBlock = document.createElement('div');
+                var textNode = document.createTextNode(msg);
+                $msgBlock.className = "msg " + type;
+                $msgBlock.appendChild(textNode);
+
+                $chatBox.appendChild($msgBlock);
+            }
+
+            ws.onclose = function () {
+                ws.send('disconnection:' + myId);
+            }
+
+            function onSubmitForm(e) {
+                e.preventDefault();
+                var input = document.getElementById("msg");
+                if (!!input.value) {
+                    ws.send(myId + ':' + input.value);
+                    input.value = "";
+                }
+                return false;
+            }
+
+            function classifyMsg (str) {
+                var index = str.indexOf(":");
+                if (index == -1) {
+                    throw new Error(`Message Classify failed: ${str}`);
+                }
+                var msgOf = str.substring(0, index);
+                var msgContent = str.substring(index + 1);
+
+                if (msgOf === "notice") return ["notice", msgContent];
+                else if (msgOf === myId) return ["me", msgContent];
+                else return ["you", msgContent];
+            };
+        </script>
+    </body>
+</html>
